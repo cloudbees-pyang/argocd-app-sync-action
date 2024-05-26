@@ -1,0 +1,29 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: action
+name: argocd-app-sync-action
+description: sync applications through argocd
+inputs:
+  username:
+    description: username to authenticate
+    required: true
+  password:
+    description: password to use
+    required: true 
+  applicationname:
+    description: application name
+    required: true
+  
+runs:
+  using: composite
+  steps:
+    - id: login
+      name: login to argocd
+      uses: docker://poseidon1979/curl-jq:1.0
+      run: | 
+        SESSION_TOKEN=$(curl -d "{\"username\": \"${{ inputs.username }}\", \"password\": \"${{ inputs.password }}\"}" -H "Content-Type: application/json" "http://34.110.153.253/api/v1/session" | jq -r .token)           
+
+        APPLICATION="${{ inputs.applicationname }}"
+        
+        curl -s -o response.txt -w "%{response_code}" -k -L -X POST -H "Content-Type: application/json" "http://34.110.153.253/api/v1/applications/$APPLICATION/sync" --cookie "argocd.token=$SESSION_TOKEN"
+        cat response.txt
+          
