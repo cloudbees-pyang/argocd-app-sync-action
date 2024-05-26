@@ -24,6 +24,6 @@ runs:
 
         APPLICATION="${{ inputs.applicationname }}"
         
-        curl -s -o response.txt -w "%{response_code}" -k -L -X POST -H "Content-Type: application/json" "http://34.110.153.253/api/v1/applications/$APPLICATION/sync" --cookie "argocd.token=$SESSION_TOKEN"
+        curl -s -o response.txt -w "%{response_code}" -k -L -X POST -H "Content-Type: application/json" --data "{}" "http://34.110.153.253/api/v1/applications/$APPLICATION/sync" --cookie "argocd.token=$SESSION_TOKEN"
         cat response.txt
           
